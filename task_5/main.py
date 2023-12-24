@@ -8,22 +8,22 @@ import statistics
 
 pd.set_option("display.max_rows", 20, "display.max_columns", 60)
 
-file_name = "../tasks/[4]vacancies.csv.gz"
+file_name = "../tasks/[5]asteroid.zip"
 column_names = [
-        "id",
-        "schedule_id",
-        "schedule_name",
-        "accept_kids",
-        "experience_id",
-        "experience_name",
-        "salary_from",
-        "salary_to",
-        "salary_gross",
-        "salary_currency",
+        "spkid",
+        "name",
+        "pha",
+        "albedo",
+        "orbit_id",
+        "equinox",
+        "per",
+        "moid",
+        "sigma_a",
+        "sigma_q",
     ]
 
 def read_file(file_name):
-    return next(pd.read_csv(file_name, chunksize=100_000, compression='gzip'))
+    return next(pd.read_csv(file_name, chunksize=100_000, compression='zip'))
 
 
 def opt_types(optimized_dataset, file_name):
@@ -47,7 +47,6 @@ def opt_types(optimized_dataset, file_name):
             usecols=lambda x: x in column_names,
             dtype=need_column,
             chunksize=100_000,
-
     ):
         print(f"chink memory usage = {statistics.mem_usage(chunk)}")
         chunk.to_csv("df.csv", mode="a", header=has_header)

@@ -44,11 +44,11 @@ def opt_obj(data, compression=False):
     return converted_obj
 
 
-def opt_dataset(data):
+def opt_dataset(data, compression=False):
     optimized_dataset = data.copy()
     converted_int = opt_int(data)
     converted_float = opt_float(data)
-    converted_obj = opt_obj(data)
+    converted_obj = opt_obj(data, compression)
 
     optimized_dataset[converted_int.columns] = converted_int
     optimized_dataset[converted_float.columns] = converted_float

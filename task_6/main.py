@@ -8,22 +8,22 @@ import statistics
 
 pd.set_option("display.max_rows", 20, "display.max_columns", 60)
 
-file_name = "../tasks/[4]vacancies.csv.gz"
+file_name = "../tasks/[1]game_logs.csv"
 column_names = [
-        "id",
-        "schedule_id",
-        "schedule_name",
-        "accept_kids",
-        "experience_id",
-        "experience_name",
-        "salary_from",
-        "salary_to",
-        "salary_gross",
-        "salary_currency",
+        "date",
+        "number_of_game",
+        "day_of_week",
+        "park_id",
+        "v_manager_name",
+        "length_minutes",
+        "v_hits",
+        "h_hits",
+        "h_walks",
+        "h_errors",
     ]
 
 def read_file(file_name):
-    return next(pd.read_csv(file_name, chunksize=100_000, compression='gzip'))
+    return next(pd.read_csv(file_name, chunksize=100_000))
 
 
 def opt_types(optimized_dataset, file_name):
@@ -47,7 +47,6 @@ def opt_types(optimized_dataset, file_name):
             usecols=lambda x: x in column_names,
             dtype=need_column,
             chunksize=100_000,
-
     ):
         print(f"chink memory usage = {statistics.mem_usage(chunk)}")
         chunk.to_csv("df.csv", mode="a", header=has_header)
@@ -66,7 +65,7 @@ def main():
 
     print('--- optimization obj ---')
     dataset_obj = data.select_dtypes(include=["object"]).copy()
-    converted_obj = optimizer.opt_obj(data, compression=True)
+    converted_obj = optimizer.opt_obj(data)
     print(statistics.mem_usage(dataset_obj))
     print(statistics.mem_usage(converted_obj))
 
@@ -83,7 +82,7 @@ def main():
     print(statistics.mem_usage(converted_float))
 
     print('--- optimized dataset ---')
-    optimized_dataset = optimizer.opt_dataset(data, compression=True)
+    optimized_dataset = optimizer.opt_dataset(data)
     print(f"default data memory usage = {statistics.mem_usage(data)}")
     print(f"optimized dataset memory usage = {statistics.mem_usage(optimized_dataset)}")
 

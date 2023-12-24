@@ -1,0 +1,1 @@
+{"spkid": "uint32", "name": "object", "pha": "object", "albedo": "float32", "orbit_id": "object", "equinox": "object", "per": "float64", "moid": "float32", "sigma_a": "float32", "sigma_q": "float32"}

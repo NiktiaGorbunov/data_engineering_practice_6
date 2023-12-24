@@ -82,7 +82,7 @@ def main():
     print(statistics.mem_usage(converted_float))
 
     print('--- optimized dataset ---')
-    optimized_dataset = optimizer.opt_dataset(data)
+    optimized_dataset = optimizer.opt_dataset(data, compression=True)
     print(f"default data memory usage = {statistics.mem_usage(data)}")
     print(f"optimized dataset memory usage = {statistics.mem_usage(optimized_dataset)}")
 
