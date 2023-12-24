@@ -1,0 +1,1 @@
+{"id": "uint32", "schedule_id": "object", "schedule_name": "object", "accept_kids": "bool", "experience_id": "object", "experience_name": "object", "salary_from": "float32", "salary_to": "float32", "salary_gross": "object", "salary_currency": "object"}
