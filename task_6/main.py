@@ -8,22 +8,30 @@ import statistics
 
 pd.set_option("display.max_rows", 20, "display.max_columns", 60)
 
-file_name = "../tasks/[1]game_logs.csv"
+LINK = 'https://www.kaggle.com/datasets/diegosilvadefrana/fisical-activity-dataset'
+
+file_name = "../tasks/[6]physical_activity_prediction.zip"
+
+
 column_names = [
-        "date",
-        "number_of_game",
-        "day_of_week",
-        "park_id",
-        "v_manager_name",
-        "length_minutes",
-        "v_hits",
-        "h_hits",
-        "h_walks",
-        "h_errors",
+        "activityID",
+        "heart_rate",
+        "hand temperature (°C)",
+        "hand gyroscope X",
+        "hand gyroscope Y",
+        "hand gyroscope Z",
+        "chest temperature (°C)",
+        "chest gyroscope X",
+        "chest gyroscope Y",
+        "chest gyroscope Z",
+        "ankle temperature (°C)",
+        "ankle gyroscope X",
+        "ankle gyroscope Y",
+        "ankle gyroscope Z",
     ]
 
 def read_file(file_name):
-    return next(pd.read_csv(file_name, chunksize=100_000))
+    return next(pd.read_csv(file_name, chunksize=100_000, compression='zip'))
 
 
 def opt_types(optimized_dataset, file_name):

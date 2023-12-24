@@ -1,5 +1,6 @@
 import json
-
+import plotly.express as px
+import plotly
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -23,56 +24,53 @@ def read_types(file_name):
 
 def create_graphs():
     need_dtyps = read_types('dtypes.json')
-    dataset = pd.read_csv('df.csv', usecols=lambda x: x in need_dtyps.keys(), dtype=need_dtyps)
-    dataset.info(memory_usage='deep')
-    # # Линейный график
-    # dataset['date'] = pd.to_datetime(dataset['date'], format='%Y%m%d')
-    # yearly_counts = dataset.groupby(dataset['date'].dt.year)['number_of_game'].sum().reset_index()
-    # plt.figure(figsize=(15, 7))
-    # plt.plot(yearly_counts['date'], yearly_counts['number_of_game'], marker='o', linestyle='-', color='b')
-    # plt.title('Число игр по кварталам')
-    # plt.xlabel('Квартал')
-    # plt.ylabel('Число игр')
-    # plt.grid(True)
+    df = pd.read_csv('df.csv', usecols=lambda x: x in need_dtyps.keys(), dtype=need_dtyps)
+    # df.info(memory_usage='deep')
+    numeric_data = df.select_dtypes(include=['float32', 'float64'])
+
+    # # 1. Линейный график
+    # plt.figure(figsize=(10, 6))
+    # for activity, group in df.groupby('activityID'):
+    #     plt.plot(group['heart_rate'], label=activity)
+    #
+    # plt.title('Частота сердечных сокращений при различных видах деятельности')
+    # plt.xlabel('Sample Index')
+    # plt.ylabel('Heart Rate')
+    # plt.legend()
     # plt.savefig('plots/plot_1')
-    #
-    # # Столбчатая диаграмма
-    # plt.figure(figsize=(10, 5))
-    # sns.countplot(x='day_of_week', data=dataset, palette='viridis', legend=False)
-    # plt.title('Распределение общей посещаймости по дням')
-    # plt.xlabel('День недели')
-    # plt.ylabel('Число игр')
-    # plt.savefig('plots/plot_2')
-    #
-    # # Столбчатая диаграмма
-    # dataset['date'] = pd.to_datetime(dataset['date'], format='%Y%m%d')
-    # selected_fields = ['park_id', 'length_minutes']
-    # park_length_means = dataset.groupby('park_id')[selected_fields[1]].mean().reset_index()
-    # sorted_park_lengths = park_length_means.sort_values(by='length_minutes', ascending=False)
-    # top_10_park_lengths = sorted_park_lengths.head(10)
-    #
-    # plt.figure(figsize=(10, 5))
-    # plt.bar(top_10_park_lengths['park_id'], top_10_park_lengths['length_minutes'], color='orange', alpha=0.7)
-    # plt.title('Средняя длительность игр в каждом парке')
-    # plt.xlabel('ID парка')
-    # plt.ylabel('Средняя длительность игр (минуты)')
-    # plt.savefig('plots/plot_3')
-    #
-    # # Круговая диаграмма
-    # plt.figure(figsize=(8, 8))
-    # dataset['day_of_week'].value_counts().plot.pie(autopct='%1.1f%%', startangle=90, colors=sns.color_palette('pastel'))
-    # plt.title('Распределение общей посещаймости по дням')
-    # plt.savefig('plots/plot_4')
-    #
-    #
-    # # График корреляции
-    # dataset['date'] = pd.to_datetime(dataset['date'], format='%Y%m%d')
-    # selected_fields = ['number_of_game','length_minutes', 'v_hits', 'h_hits', 'h_walks', 'h_errors']
-    # correlation_matrix = dataset[selected_fields].corr()
-    # plt.figure(figsize=(10, 8))
-    # sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=.5)
-    # plt.title('График корреляции')
-    # plt.savefig('plots/plot_5')
+
+    # 2. Столбчатая диаграмма
+    temperature_columns = ['hand temperature (°C)', 'chest temperature (°C)', 'ankle temperature (°C)']
+    df['activityID'] = df['activityID'].astype(str)
+    avg_temperatures = df.groupby('activityID')[temperature_columns].mean().reset_index()
+    avg_temperatures = avg_temperatures.melt(id_vars='activityID', var_name='Temperature Type',
+                                             value_name='Average Temperature')
+    plt.figure(figsize=(12, 8))
+    sns.barplot(x='activityID', y='Average Temperature', hue='Temperature Type', data=avg_temperatures)
+    plt.title('Средние температуры для различных видов деятельности')
+    plt.xlabel('Activity ID')
+    plt.ylabel('Average Temperature')
+    plt.legend(title='Temperature Type')
+    plt.xticks(rotation=45, ha='right')
+    plt.savefig('plots/plot_2')
+
+    # # 3. Кольцевая диаграмма
+    plt.figure(figsize=(8, 8))
+    df['activityID'].value_counts().plot.pie(autopct='%1.1f%%')
+    plt.title('Распределение активностей')
+    plt.savefig('plots/plot_3')
+
+    # # 4. Тепловая карта
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(numeric_data.corr(), annot=True, cmap='coolwarm')
+    plt.title('Карта корреляции')
+    plt.savefig('plots/plot_4')
+
+    # # 5. Сложный график зависимостей
+    plt.figure(figsize=(12, 8))
+    sns.pairplot(numeric_data[['hand gyroscope X', 'hand gyroscope Y', 'hand gyroscope Z']])
+    plt.suptitle('Парная диаграмма переменных с оттенком для различных видов деятельности', y=1.02)
+    plt.savefig('plots/plot_5')
 
 if __name__ == "__main__":
     create_graphs()
